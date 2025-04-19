@@ -62,28 +62,12 @@ Accessing the ESP's IP in a browser shows:
 
 - If WiFi fails to connect after 5 tries → **device reboots**
 - If MQTT fails after 5 attempts → **device reboots**
-- Ensures robust, self-recovering operation without manual intervention
+- If Serial fail  → **device reboots**
 
----
-
-## 📁 File Structure
-
-- `main.ino` → the main sketch with full code
-- `README.md` → this documentation file
-
----
-
-## ✨ To Do / Ideas
-
-- Add SD logging
-- MQTT alerts for threshold breaches
-- Real-time web-based graphs
-
----
 
 ## 📸 Screenshots
 
-*(Add a screenshot of the web UI or Home Assistant integration here)*
+![WebPage](screenshot.png)
 
 ---
 
