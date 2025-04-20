@@ -80,18 +80,17 @@ void loop() {
   mqttClient.loop();
 
   data1 = readPZEM(pzem1, "PZEM1");
-  yield(); delay(1000);
+  yield(); delay(5000);
   publishData("pzem1", data1);
 
   data2 = readPZEM(pzem2, "PZEM2");
-  yield(); delay(1000);
+  yield(); delay(5000);
   publishData("pzem2", data2);
 
   data3 = readPZEM(pzem3, "PZEM3");
-  yield(); delay(1000);
+  yield(); delay(5000);
   publishData("pzem3", data3);
 
-  yield(); delay(5000);
 }
 
 PZEMData readPZEM(PZEM004Tv30 &pzem, const String &label) {
