@@ -57,11 +57,26 @@ void setup() {
   ArduinoOTA.begin();
 
   server.on("/", handleRoot);
+  
   server.on("/reboot", []() {
     server.send(200, "text/html", "<html><body><h2>Riavvio ESP...</h2></body></html>");
     delay(1000);
     ESP.restart();
   });
+
+server.on("/reset_energy", []() {
+  bool ok1 = pzem1.resetEnergy();
+  bool ok2 = pzem2.resetEnergy();
+  bool ok3 = pzem3.resetEnergy();
+
+  String msg = "<html><body><h2>Energy Reset</h2>";
+  msg += "<p>PZEM1 reset: " + String(ok1 ? "OK" : "FAILED") + "</p>";
+  msg += "<p>PZEM2 reset: " + String(ok2 ? "OK" : "FAILED") + "</p>";
+  msg += "<p>PZEM3 reset: " + String(ok3 ? "OK" : "FAILED") + "</p>";
+  msg += "<br><a href='/'>Back</a></body></html>";
+
+  server.send(200, "text/html", msg);
+});
 
   server.begin();
 
@@ -74,9 +89,15 @@ void setup() {
   publishDiscovery("pzem3", 0x03);
 }
 
+
 void loop() {
   ArduinoOTA.handle();
   server.handleClient();
+  if (!mqttClient.connected()) {
+  Serial.println("MQTT disconnected, reconnecting...");
+  connectToMQTT();
+  }
+
   mqttClient.loop();
 
   data1 = readPZEM(pzem1, "PZEM1");
@@ -192,7 +213,7 @@ void publishData(const String& name, const PZEMData& d) {
   mqttClient.publish((mqtt_base_topic + "/" + name + "/voltage").c_str(), String(d.voltage).c_str(), true);
   mqttClient.publish((mqtt_base_topic + "/" + name + "/current").c_str(), String(d.current).c_str(), true);
   mqttClient.publish((mqtt_base_topic + "/" + name + "/power").c_str(), String(d.power).c_str(), true);
-  mqttClient.publish((mqtt_base_topic + "/" + name + "/energy").c_str(), String(d.energy / 1000.0, 3).c_str(), true);
+  mqttClient.publish((mqtt_base_topic + "/" + name + "/energy").c_str(), String(d.energy).c_str(), true);
   mqttClient.publish((mqtt_base_topic + "/" + name + "/frequency").c_str(), String(d.frequency).c_str(), true);
   mqttClient.publish((mqtt_base_topic + "/" + name + "/pf").c_str(), String(d.pf).c_str(), true);
 }
