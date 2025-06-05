@@ -30,12 +30,13 @@ ESP8266WebServer server(80);
 PZEM004Tv30 pzem1(pzemSerial, 0x01);
 PZEM004Tv30 pzem2(pzemSerial, 0x02);
 PZEM004Tv30 pzem3(pzemSerial, 0x03);
+PZEM004Tv30 pzem4(pzemSerial, 0x04);
 
 struct PZEMData {
   float voltage, current, power, energy, frequency, pf;
 };
 
-PZEMData data1, data2, data3;
+PZEMData data1, data2, data3, data4;
 
 void setup() {
   Serial.begin(115200);
@@ -68,11 +69,13 @@ server.on("/reset_energy", []() {
   bool ok1 = pzem1.resetEnergy();
   bool ok2 = pzem2.resetEnergy();
   bool ok3 = pzem3.resetEnergy();
+  bool ok4 = pzem3.resetEnergy();
 
   String msg = "<html><body><h2>Energy Reset</h2>";
   msg += "<p>PZEM1 reset: " + String(ok1 ? "OK" : "FAILED") + "</p>";
   msg += "<p>PZEM2 reset: " + String(ok2 ? "OK" : "FAILED") + "</p>";
   msg += "<p>PZEM3 reset: " + String(ok3 ? "OK" : "FAILED") + "</p>";
+  msg += "<p>PZEM4 reset: " + String(ok4 ? "OK" : "FAILED") + "</p>";
   msg += "<br><a href='/'>Back</a></body></html>";
 
   server.send(200, "text/html", msg);
@@ -87,6 +90,7 @@ server.on("/reset_energy", []() {
   publishDiscovery("pzem1", 0x01);
   publishDiscovery("pzem2", 0x02);
   publishDiscovery("pzem3", 0x03);
+  publishDiscovery("pzem4", 0x04);
 }
 
 
@@ -112,6 +116,9 @@ void loop() {
   yield(); delay(5000);
   publishData("pzem3", data3);
 
+  data4 = readPZEM(pzem4, "PZEM4");
+  yield(); delay(5000);
+  publishData("pzem4", data4);
 }
 
 PZEMData readPZEM(PZEM004Tv30 &pzem, const String &label) {
@@ -133,11 +140,12 @@ PZEMData readPZEM(PZEM004Tv30 &pzem, const String &label) {
 
 void handleRoot() {
   String html = "<html><head><meta name='viewport' content='width=device-width, initial-scale=1'>";
-  html += "<title>PZEM Debug</title></head><body>";
+  html += "<title>PZEM Energy Monitor</title></head><body>";
   html += "<h2>PZEM-004T v3 - MQTT + Web</h2>";
   html += formatPZEMTable("PZEM1", data1);
   html += formatPZEMTable("PZEM2", data2);
   html += formatPZEMTable("PZEM3", data3);
+  html += formatPZEMTable("PZEM4", data4);
   html += "<br><button onclick='location.reload()'>Aggiorna</button>";
   html += "<br><br><button onclick=\"location.href='/reboot'\">Riavvia ESP</button>";
   html += "</body></html>";
@@ -201,7 +209,7 @@ for (int i = 0; i < 6; i++) {
   }
 
   payload += ",\"unique_id\": \"" + name + "_" + key + "\"";
-  payload += ",\"device\": {\"identifiers\": [\"" + name + "\"], \"name\": \"" + name + "\"}";
+  payload += ",\"device\": {\"identifiers\": [\"" + name + "\"], \"name\": \"" + name + "\",\"model\": \"PZEM004T v3\",\"manufacturer\": \"HiDaBa\" }";
   payload += "}";
 
   mqttClient.publish(topic.c_str(), payload.c_str(), true);

@@ -1,13 +1,13 @@
 # PZEM004T v3 Monitor with ESP8266, MQTT and Home Assistant
 
-This project enables monitoring up to 3 **PZEM-004T v3** modules using an **ESP8266**, publishing data to **MQTT**, and automatically integrating with **Home Assistant** using **AutoDiscovery**. It also includes a **web debug interface**, **OTA support**, and automatic network fault recovery.
+This project enables monitoring up to 4 **PZEM-004T v3** modules using an **ESP8266**, publishing data to **MQTT**, and automatically integrating with **Home Assistant** using **AutoDiscovery**. It also includes a **web debug interface**, **OTA support**, and automatic network fault recovery.
 
 ---
 
 ## 📦 Features
 
 
-- 🔌 Reads data from 3 PZEM-004T v3 modules via **SoftwareSerial** (D5/D6)
+- 🔌 Reads data from 4 PZEM-004T v3 modules via **SoftwareSerial** (D5/D6)
 - 📶 WiFi connection with **automatic retry and reboot** after 5 failed attempts
 - 📡 MQTT connection with **512 byte buffer** and reboot on failure
 - 🏠 Full **Home Assistant AutoDiscovery** support via MQTT
@@ -20,7 +20,7 @@ This project enables monitoring up to 3 **PZEM-004T v3** modules using an **ESP8
 ## ⚙️ Required Hardware
 
 - 1x ESP8266 (NodeMCU or Wemos D1 Mini recommended)
-- 3x PZEM-004T v3 modules
+- 4x PZEM-004T v3 modules
 - 5V Power Supply
 - TX line from PZEM to ESP RX must be adapted using a **resistor divider**
 
